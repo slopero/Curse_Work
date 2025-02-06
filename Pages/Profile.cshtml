@@ -1,0 +1,114 @@
+﻿@page
+@model WebApplication7.Pages.ProfileModel
+@{
+	ViewData["Title"] = "Личный кабинет";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <img src="@Model.AvatarUrl" alt="Ваш аватар">
+    <p>Ваш Email</p>
+    <input type = "text" value="@Model.Email">
+    <form method="post" asp-page-handler="UpdateEmail">
+    <div>
+        <label>Email:</label>
+        <input asp-for="NewEmail" type="email">
+        <button type="submit">Обновить Email</button>
+    </div>
+    </form>
+
+
+    <form method="post" asp-page-handler="UpdatePassword">
+        <div>
+            <label>Новый пароль:</label>
+            <input asp-for="NewPassword" type="password" />
+            <button type="submit">Обновить пароль</button>
+        </div>
+    </form>
+
+    <form method="post" enctype="multipart/form-data" asp-page-handler="UpdateAvatar">
+        <div>
+            <label>Новый аватар:</label>
+            <input type="file" name="avatarFile" accept=".jpeg,.jpg" />
+            <button type="submit">Обновить аватар</button>
+        </div>
+    </form>
+
+    <form method="post" asp-page-handler="UpdateAddress">
+        <div>
+            <label>Новый адрес:</label>
+            <input asp-for="DeliveryAddress" type="text" />
+            <button type="submit">Обновить адрес</button>
+        </div>
+    </form>
+
+    <form method="post" asp-page-handler="UpdatePayment">
+        <div>
+            <label>Метод оплаты:</label>
+            <select asp-for="PaymentMethod">
+                <option value="cash">Наличные</option>
+                <option value="card">Карта</option>
+            </select>
+            <button type="submit">Обновить метод оплаты</button>
+        </div>
+    </form>
+
+    <h3>История заказов</h3>
+
+    @if (Model.OrderHistory != null && Model.OrderHistory.Any())
+    {
+        <table class="order-history">
+            <thead>
+                <tr>
+                    <th>Дата заказа</th>
+                    <th>Товары</th>
+                    <th>Сумма</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model.OrderHistory)
+                {
+                    <tr>
+                        <td>@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@order.OrderItems</td>
+                        <td>@order.TotalAmount руб.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>У вас пока нет заказов.</p>
+    }
+</div>
+
+<script>
+    window.onload = function () {
+        var email = '@Model.Email';
+        if (!email) {
+            alert('Необходимо войти в систему.');
+            window.location.href = '/Auth'; 
+        }
+    };
+</script>
+
+<style>
+    .order-history {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+        .order-history th, .order-history td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .order-history th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+</style>
